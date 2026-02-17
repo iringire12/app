@@ -9,7 +9,8 @@ services:
     volumes:
       - mongodb_data:/data/db
     networks:
-      - delval_network
+      delval_network:
+        ipv4_address: 172.20.0.4
 
   backend:
     build: ./backend-project
@@ -22,7 +23,8 @@ services:
     depends_on:
       - mongodb
     networks:
-      - delval_network
+      delval_network:
+        ipv4_address: 172.20.0.2
 
   frontend:
     build: ./frontend-project
@@ -32,7 +34,8 @@ services:
     depends_on:
       - backend
     networks:
-      - delval_network
+      delval_network:
+        ipv4_address: 172.20.0.3
 
   mailhog:
     image: mailhog/mailhog
@@ -41,7 +44,8 @@ services:
       - "1025:1025" # SMTP port
       - "8025:8025" # Web UI port
     networks:
-      - delval_network
+      delval_network:
+        ipv4_address: 172.20.0.5
 
   ssh-server:
     image: linuxserver/openssh-server
@@ -58,11 +62,28 @@ services:
       - "2222:22" # Mapping to 2222 to avoid conflict with host SSH
     restart: unless-stopped
     networks:
-      - delval_network
+      delval_network:
+        ipv4_address: 172.20.0.6
+
+  dns-server:
+    image: coredns/coredns
+    container_name: delval_dns
+    volumes:
+      - ./Corefile:/Corefile
+    command: -conf /Corefile
+    ports:
+      - "53:53/udp"
+      - "53:53/tcp"
+    networks:
+      delval_network:
+        ipv4_address: 172.20.0.10
 
 networks:
   delval_network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/24
 
 volumes:
   mongodb_data:

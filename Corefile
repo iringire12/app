@@ -1,0 +1,13 @@
+.:53 {
+    forward . 8.8.8.8 8.8.4.4
+    log
+    errors
+    hosts {
+        172.20.0.2 api.delval.local
+        172.20.0.3 web.delval.local
+        172.20.0.4 db.delval.local
+        172.20.0.5 mail.delval.local
+        172.20.0.6 ssh.delval.local
+        fallthrough
+    }
+}
