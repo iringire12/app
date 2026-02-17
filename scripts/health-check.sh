@@ -16,8 +16,12 @@ for SERVICE in "${SERVICES[@]}"; do
         echo "Service $NAME is UP."
     else
         echo "ALERT: Service $NAME is DOWN! Sending notification to $ALERT_EMAIL"
-        # In a real system, you would use 'mail' or an API like SendGrid/Mailgun
-        echo "Subject: SYSTEM ALERT - $NAME IS DOWN" | tee -a monitoring.log
+        # Send alert to MailHog using its API
+        curl -s -X POST http://localhost:8025/api/v1/messages \
+             -d "{\"From\": \"system@delval.com\", \"To\": [\"$ALERT_EMAIL\"], \"Subject\": \"SYSTEM ALERT - $NAME IS DOWN\", \"Body\": \"The service $NAME on port $PORT is currently unreachable.\"}" \
+             -H "Content-Type: application/json"
+        
+        echo "$(date): Subject: SYSTEM ALERT - $NAME IS DOWN" >> monitoring.log
     fi
 done
 

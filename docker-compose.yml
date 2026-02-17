@@ -34,6 +34,15 @@ services:
     networks:
       - delval_network
 
+  mailhog:
+    image: mailhog/mailhog
+    container_name: delval_mail
+    ports:
+      - "1025:1025" # SMTP port
+      - "8025:8025" # Web UI port
+    networks:
+      - delval_network
+
 networks:
   delval_network:
     driver: bridge
