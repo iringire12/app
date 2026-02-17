@@ -43,6 +43,23 @@ services:
     networks:
       - delval_network
 
+  ssh-server:
+    image: linuxserver/openssh-server
+    container_name: delval_ssh
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - TZ=Etc/UTC
+      - USER_PASSWORD=delvaladmin # Default password for the team
+      - USER_NAME=admin
+    volumes:
+      - ./scripts:/home/admin/scripts # Give access to CI/CD scripts
+    ports:
+      - "2222:22" # Mapping to 2222 to avoid conflict with host SSH
+    restart: unless-stopped
+    networks:
+      - delval_network
+
 networks:
   delval_network:
     driver: bridge
